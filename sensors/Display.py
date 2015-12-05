@@ -11,8 +11,6 @@ class Display:
         self.lcd.backlight_on()
         self.lcd.begin(16, 2)
         self.lcd.clear()
-        self.lcd.message("Welcome back\nATHLETE!")
-
 
     def on(self):
         if self.has_grnd >= 0:
@@ -30,3 +28,6 @@ class Display:
 
     def clear(self):
         self.lcd.clear()
+
+    def clear_row(self, row):
+        self.message(0, row, "                ")
