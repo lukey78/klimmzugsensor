@@ -1,6 +1,7 @@
 #!/usr/bin/env/python
 
 import time
+import sys
 
 import wiringpi2 as wiringpi
 from helper.InactivityTimer import InactivityTimer
@@ -9,6 +10,7 @@ from sensors.DistanceSensor import DistanceSensor
 from sensors.Display import Display
 from sensors.Buzzer import Buzzer
 from sensors.Led import Led
+from pullup.PullupStorage import PullupStorage
 import configuration as config
 
 
@@ -24,6 +26,7 @@ distance_sensor = None
 lcd = None
 buzzer = None
 led = None
+storage = None
 last_pullup_time = 0
 
 pullup_count_today = 0
@@ -53,8 +56,11 @@ def wakeup():
     global lcd
     global led
     global pullup_count_alltime
+    global storage
     if config.DEBUG:
         print("waking up")
+        print("pullups all time: ", storage.get_alltime_count())
+        print("pullups today: ", storage.get_today_count())
     led.on()
     lcd.on()
     lcd.message(0, 0, "Welcome ATHLETE!")
@@ -66,6 +72,9 @@ def count_pullup():
     global pullups_to_go
     global pullup_count_alltime
     global last_pullup_time
+    global storage
+
+    storage.count_pullup()
 
     pullup_count_today += 1
     pullup_count_alltime += 1
@@ -73,6 +82,17 @@ def count_pullup():
 
     last_pullup_time = wiringpi.millis()
     return pullup_count_today
+
+
+def init_storage():
+    global storage
+    global pullup_count_today
+    global pullup_count_alltime
+    global pullups_to_go
+    storage = PullupStorage(config.DB_HOST, config.DB_NAME, config.DB_USER, config.DB_PASS)
+    pullup_count_alltime = storage.get_alltime_count()
+    pullup_count_today = storage.get_today_count()
+    pullups_to_go = pullups_to_go - pullup_count_today
 
 
 def main():
@@ -86,8 +106,11 @@ def main():
     global last_pullup_time
     global pullup_count_alltime
     global pullups_to_go
+    global storage
 
     wiringpi.wiringPiSetupGpio()
+
+    init_storage()
 
     inactivity_timer = InactivityTimer(wakeup, shutdown, config.SHUTDOWN_DELAY)
     motion_sensor = MotionSensor(wiringpi, config.MOTION, inactivity_timer.trigger)
@@ -137,6 +160,12 @@ def main():
 
 if __name__ == "__main__":
     try:
-        main()
+        if len(sys.argv) == 2 and sys.argv[1] == "setup_storage":
+            print("setting up table in database")
+            init_storage()
+            storage.setup()
+            print("done.")
+        else:
+            main()
     except (KeyboardInterrupt, SystemExit):
         shutdown()

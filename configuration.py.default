@@ -1,5 +1,12 @@
 __author__ = 'Jens'
 
+# DATABASE config
+
+DB_HOST = "localhost"
+DB_NAME = "pullups"
+DB_USER = "pullups"
+DB_PASS = "pulluppass456"
+
 
 # SYSTEM config
 
@@ -13,9 +20,10 @@ SHUTDOWN_DELAY = 60
 COUNT_DISTANCE = 5
 # the min distance the athlete's head has to move away from the sensor to reset the cheat counter (cm)
 RESET_DISTANCE = 20
-# the milliseconds an athlete's head has to stay away from the sensor (more then RESET_DISTANCE away) to reset the cheat counter
-RESET_TIME = 1000
 
+# the milliseconds an athlete's head has to stay away from the sensor (more then RESET_DISTANCE away)
+# to reset the cheat counter
+RESET_TIME = 1000
 
 # PULLUPs config
 PULLUPS_PER_DAY = 50

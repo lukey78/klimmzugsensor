@@ -1,5 +1,6 @@
 __author__ = 'Jens'
 
+
 class Led:
 
     def __init__(self, wiringpi, led_pin):
