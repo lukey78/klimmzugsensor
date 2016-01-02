@@ -5,9 +5,9 @@ from libs.lcd1602 import Adafruit_CharLCD
 
 class Display:
 
-    def __init__(self, pin_rs, pin_e, pin_d4, pin_d5, pin_d6, pin_d7, pin_grnd = -1):
-        self.has_grnd = pin_grnd
-        self.lcd = Adafruit_CharLCD(pin_rs, pin_e, [pin_d4, pin_d5, pin_d6, pin_d7], None, pin_grnd)
+    def __init__(self, pin_rs, pin_e, pin_d4, pin_d5, pin_d6, pin_d7, pin_k = -1):
+        self.has_grnd = pin_k
+        self.lcd = Adafruit_CharLCD(pin_rs, pin_e, [pin_d4, pin_d5, pin_d6, pin_d7], None, pin_k)
         self.lcd.backlight_on()
         self.lcd.begin(16, 2)
         self.lcd.clear()

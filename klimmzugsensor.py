@@ -26,11 +26,9 @@ buzzer = None
 led = None
 last_pullup_time = 0
 
-
 pullup_count_today = 0
 pullup_count_alltime = 0
-pullups_to_go = 50
-
+pullups_to_go = config.PULLUPS_PER_DAY
 
 
 def delay(delay_microseconds):
@@ -94,7 +92,7 @@ def main():
     inactivity_timer = InactivityTimer(wakeup, shutdown, config.SHUTDOWN_DELAY)
     motion_sensor = MotionSensor(wiringpi, config.MOTION, inactivity_timer.trigger)
     distance_sensor = DistanceSensor(wiringpi, config.SONIC_ECHO, config.SONIC_TRIG)
-    lcd = Display(config.LCD_RS, config.LCD_E, config.LCD_D4, config.LCD_D5, config.LCD_D6, config.LCD_D7, config.LCD_GRND)
+    lcd = Display(config.LCD_RS, config.LCD_E, config.LCD_D4, config.LCD_D5, config.LCD_D6, config.LCD_D7, config.LCD_K)
     buzzer = Buzzer(wiringpi, config.BUZZER)
     led = Led(wiringpi, config.LED_PIN)
 
@@ -117,14 +115,14 @@ def main():
             # - distance is smaller than 5cm
             # - distance was resetted (athlete moved more than 20 cm away from sensor)
             # - last pullup was done more than 1 second ago
-            if 0 < distance < 5 and distance_resetted and wiringpi.millis() > (last_pullup_time + 1000):
-                buzzer.beep(1000)
+            if 0 < distance < config.COUNT_DISTANCE and distance_resetted and wiringpi.millis() > (last_pullup_time + config.RESET_TIME):
+                buzzer.beep(5000)
                 distance_resetted = False
                 cnt = count_pullup()
                 lcd.clear()
                 lcd.message(0, 0, "Pullups: " + str(cnt).rjust(5))
                 lcd.message(0, 1, "2do2day: " + str(pullups_to_go).rjust(5))
-            elif distance > 20:
+            elif distance > config.RESET_DISTANCE:
                 distance_resetted = True
 
         delay_milli(100)
