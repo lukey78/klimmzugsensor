@@ -11,7 +11,7 @@ DB_PASS = "pulluppass456"
 # SYSTEM config
 
 # turn on or off debugging mode (logging in console)
-DEBUG = 1
+DEBUG = 0
 
 # after how many seconds the sensor should go to standby mode (turning off display)
 SHUTDOWN_DELAY = 60
